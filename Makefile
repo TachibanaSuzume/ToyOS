@@ -5,8 +5,6 @@ endif
 include $(DEVKITARM)/base_rules
 
 TARGET 					:= ToyOS
-BLVERSION_MAJOR := 0
-BLVERSION_MINOR := 3
 BUILD 					:= build
 OUTPUT 					:= output
 SOURCEDIR 			:= src
@@ -17,7 +15,6 @@ SOURCES		      := src \
 										src/gfx \
 										src/libs/fatfs src/libs/elfload src/libs/compr \
 										src/mem \
-										src/minerva \
 										src/panic \
 										src/power \
 										src/sec \
@@ -43,7 +40,7 @@ INCLUDE				:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 										-I$(BUILD)/$(TARGET)
 
 ARCH := -march=armv4t -mtune=arm7tdmi -mthumb -mthumb-interwork
-CFLAGS = $(INCLUDE) $(ARCH) -O2 -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-inline -std=gnu11 -Wall
+CFLAGS = $(INCLUDE) $(ARCH) -Os -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-inline -std=gnu11 -Wall
 LDFLAGS = $(ARCH) -nostartfiles -lgcc -Wl,--nmagic,--gc-sections
 
 
@@ -64,14 +61,12 @@ clean:
 	@rm -rf $(OBJS)
 	@rm -rf $(BUILD)
 	@rm -rf $(OUTPUT)
-	@rm -rf logo_bmp.h
 
 $(MODULEDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 $(TARGET).bin: $(BUILD)/$(TARGET)/$(TARGET).elf $(MODULEDIRS)
 	$(OBJCOPY) -S -O binary $< $(OUTPUT)/$@
-	@printf ICTC$(BLVERSION_MAJOR)$(BLVERSION_MINOR) >> $(OUTPUT)/$@
 
 $(BUILD)/$(TARGET)/$(TARGET).elf: $(OBJS)
 	$(CC) $(LDFLAGS) -T $(SOURCEDIR)/link.ld $^ -o $@
@@ -83,7 +78,3 @@ $(BUILD)/$(TARGET)/%.o: %.s
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OFILES_SRC)	: $(HFILES_BIN)
-
-$(BUILD)/$(TARGET)/%.bmp.o %_bmp.h:	data/%.bmp
-	@echo $(notdir $<)
-	@$(bin2o)

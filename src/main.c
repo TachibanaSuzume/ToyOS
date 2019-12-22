@@ -11,10 +11,8 @@
 
 #include "utils/util.h"
 #include "utils/fs_utils.h"
-#include "utils/touch.h"
 #include "utils/btn.h"
 
-#include "minerva/minerva.h"
 
 extern void pivot_stack(u32 stack_top);
 
@@ -115,11 +113,7 @@ void ipl_main()
     display_backlight_pwm_init();
     display_backlight_brightness(100, 1000);
 
-    g_gfx_con.mute = 1;
-    minerva();
     g_gfx_con.mute = 0;
-
-    touch_power_on();
     
 	gfx_con_setcol(&g_gfx_con, 0xFFF9F9F9, 0, 0xFF191414);
 

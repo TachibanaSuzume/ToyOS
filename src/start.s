@@ -42,7 +42,7 @@ _copy_loop:
 	LDMIA R2!, {R5}
 	STMIA R3!, {R5}
 	SUBS R4, #4
-	BNE _copy_loop
+	BGE _copy_loop
 
 	/* Use the relocator to copy ourselves into the right place. */
 	LDR R2, =__ipl_end
@@ -55,7 +55,7 @@ _reloc_ipl:
 	LDMIA R0!, {R4-R7}
 	STMIA R1!, {R4-R7}
 	SUBS R2, #0x10
-	BNE _reloc_ipl
+	BGE _reloc_ipl
 	/* Jump to the relocated entry. */
 	BX R3
 
